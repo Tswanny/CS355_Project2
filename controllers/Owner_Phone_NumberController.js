@@ -30,15 +30,16 @@ class Owner_Phone_NumberController {
     }
 
     // Fetches a single Owner_Phone_Number
-    async dataCenter(ctx) {
+    async Owner_Phone_Number(ctx) {
         console.log('Controller HIT: Owner_Phone_NumberController::Owner_Phone_Number');
         return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM Owner_Phone_Number WHERE Owner_ID = ?;';
-            const OPN = ctx.params.Owner_Phone_Number;
+            const query = 'SELECT * FROM Owner_Phone_Number WHERE Owner_ID = ? && Owner_Num = ?;';
+            const O_ID = ctx.params.Owner_ID;
+	    const ON = ctx. params.Owner_Num;
 
             chpConnection.query({
                 sql: query,
-                values: [OPN]
+                values: [O_ID, ON]
             }, (err, res) => {
                 if(err) {
                     reject(err);
@@ -62,10 +63,11 @@ class Owner_Phone_NumberController {
     async addOwner_Phone_Number(ctx, next) {
         console.log('Controller HIT: Owner_Phone_NumberController::addOwner_Phone_Number');
        return new Promise((resolve, reject) => {
-           const newOPN = ctx.request.body;
+           const O_ID = ctx.params.Owner_ID;
+	   const ON = ctx.params.Owner_Num;
            chpConnection.query({
                sql: 'INSERT INTO Owner_Phone_Number(Owner_ID, Owner_Num) VALUES (?, ?);',
-               values: [OPN.Owner_ID, OPN.Owner_Num]
+               values: [O_ID, ON]
            }, (err, res) => {
                if(err) {
                    reject(err);
@@ -89,15 +91,17 @@ class Owner_Phone_NumberController {
     async updateOwner_Phone_Number(ctx, next) {
         console.log('Controller HIT: Owner_Phone_NumberController::updateOwner_Phone_Number');
         return new Promise((resolve, reject) => {
-            const OPN = ctx.request.body;
+            const O_ID = ctx.params.Owner_ID;
+	    const OPN = ctx.params.Owner_Num;
+	    const NPN = ctx.params.New_Num;
             chpConnection.query({
                 sql: `
                     UPDATE Owner_Phone_Number
                     SET
                         Owner_Num = ?
-                    WHERE Owner_ID = ?
+                    WHERE Owner_ID = ? && Owner_Num = ?;
                     `,
-                values: [OPN.Owner_Num, ctx.params.Owner_Phone_Number]
+                values: [NPN, O_ID, OPN]
             }, (err, res) => {
                 if(err) {
                     reject(err);
@@ -120,9 +124,11 @@ class Owner_Phone_NumberController {
     async deleteOwner_Phone_Number(ctx, next) {
         console.log('Controller HIT: Owner_Phone_NumberController::deleteOwner_Phone_Number');
         return new Promise((resolve, reject) => {
+	    const O_ID = ctx.params.Owner_ID;
+	    const OPN = ctx.params.Owner_Num;
             chpConnection.query({
-                sql: `DELETE FROM Owner_Phone_Number WHERE Owner_ID = ?;`,
-                values: [ctx.params.Owner_Phone_Number]
+                sql: `DELETE FROM Owner_Phone_Number WHERE Owner_ID = ? && Owner_Num = ?;`,
+                values: [O_ID,OPN]
             }, (err, res) => {
                 if(err) {
                     reject(err);

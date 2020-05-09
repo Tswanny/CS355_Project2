@@ -7,7 +7,7 @@ class BusinessController {
 	}
 
 	// Fetches all Businesses
-	async businesses(ctx)
+	async businesses(ctx) {
 	console.log('Controller HIT: BusinessController::Businesses');
         return new Promise((resolve, reject) => {
             const query = 'SELECT * FROM Business';
@@ -34,7 +34,7 @@ class BusinessController {
         console.log('Controller HIT: BusinessController::Business');
         return new Promise((resolve, reject) => {
             const query = 'SELECT * FROM Business WHERE ID = ?;';
-            const bus = ctx.params.business;
+            const bus = ctx.params.Business_ID;
 
             chpConnection.query({
                 sql: query,
@@ -103,7 +103,7 @@ class BusinessController {
 			Email = ?
                     WHERE ID = ?
                     `,
-                values: [Bus.Name, Bus.Type, Bus.Street, Bus.City, Bus.ZIP, Bus.Phone_Num, Bus.Email,  ctx.params.Business]
+                values: [Bus.Name, Bus.Type, Bus.Street, Bus.City, Bus.ZIP, Bus.Phone_Num, Bus.Email,  ctx.params.Business_ID]
             }, (err, res) => {
                 if(err) {
                     reject(err);
@@ -128,7 +128,7 @@ class BusinessController {
         return new Promise((resolve, reject) => {
             chpConnection.query({
                 sql: `DELETE FROM Business WHERE ID = ?;`,
-                values: [ctx.params.Business]
+                values: [ctx.params.Business_ID]
             }, (err, res) => {
                 if(err) {
                     reject(err);

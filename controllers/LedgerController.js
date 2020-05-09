@@ -1,5 +1,6 @@
 const chpConnection = require('../database/CHPConnection');
 
+
 // Controller that interacts with database to retrieve data.
 class LedgerController {
 	constructor() {
@@ -33,11 +34,14 @@ class LedgerController {
 	async ledger(ctx) {
 		console.log('Controller HIT: LedgerController::ledger');
 		return new Promise((resolve, reject) => {
-			const query = 'SELECT * FROM Ledger WHERE Stamp = ?;';
-			const ledge = ctx.params.Ledger;
+			const query = 'SELECT * FROM Ledger WHERE Owner_ID = ? && Business_ID = ? && Dog_ID = ? && Stamp = ?;';
+			const O_ID = ctx.params.Owner_ID;
+			const B_ID = ctx.params.Business_ID;
+			const D_ID = ctx.params.Dog_ID;
+			const T = ctx.params.Stamp;
 			chpConnection.query({
 				sql: query,
-				values: [ledge]
+				values: [O_ID, B_ID, D_ID, T]
 			}, (err, res) => {
 				if(err) {
 					reject(err);
@@ -57,14 +61,20 @@ class LedgerController {
 		});
 	}
 
+
 	// Add a new Ledger
 	async addLedger(ctx, next) {
 		console.log('Controller HIT: LedgerController::addLedger');
 		return new Promise((resolve, reject) => {
-			const newLedger = ctx.request.body;
+			const O_ID = ctx.params.Owner_ID;
+			const B_ID = ctx.params.Business_ID;
+			const D_ID = ctx.params.Dog_ID;
+			const Cost = ctx.params.Cost;
+			const Sat = ctx.params.Satisfied;
+			const VL = ctx.params.Visit_Log;
 			chpConnection.query({
-				sql: 'INSERT INTO Ledger(Owner_ID, Business_ID, Dog_ID, Stamp, Cost, Satisfied, Visit_Log) VALUES (?, ?, ?, ?, ?, ?, ?);',
-				values: [newLedger.Owner_ID, newLedger.Business_ID, newLedger.Dog_ID, newLedger.Stamp, newLedger.Cost, newLedger.Satisfied, newLedger.Visit_Log]
+				sql: 'call Transaction(?, ?, ?, ?, ?, ?);',
+				values: [O_ID, B_ID, D_ID, Cost, Sat, VL]
 			}, (err, res) => {
 				if(err) {
 					reject(err);
@@ -83,23 +93,31 @@ class LedgerController {
 		});
 	}
 
+
 	// Update a Ledger
 	async updateLedger(ctx, next) {
 		console.log('Controller HIT: LedgerController::updateLedger');
 		return new Promise((resolve, reject) => {
-			const ledge = ctx.request.body;
+			const O_ID = ctx.params.Owner_ID;
+                        const B_ID = ctx.params.Business_ID;
+                        const D_ID = ctx.params.Dog_ID;
+			const St = ctx.params.Stamp;
+                        const Cost = ctx.params.Cost;
+                        const Sat = ctx.params.Satisfied;
+                        const VL = ctx.params.Visit_Log;
+
 			chpConnection.query({
 				sql: `UPDATE Ledger
 				SET
-					Owner_ID = ?,
-					Business_ID = ?,
-					Dog_ID = ?,
 					Cost = ?,
 					Satisfied = ?,
 					Visit_Log =?
 				WHERE
+					Owner_ID = ? &&
+					Business_ID = ? &&
+					Dog_ID = ? &&
 					Stamp = ?`,
-				values: [ledge.Owner_ID, ledge.Business_ID, ledge.Dog_ID, ledge.Cost, ledge.Satisfied, ledge.Visit_Log, ctx.params.Ledger]
+				values: [O_ID, B_ID, D_ID, St, Cost, Sat, VL]
 			}, (err, res) => {
 				if(err) {
 					reject(err);
@@ -122,9 +140,14 @@ class LedgerController {
 	async deleteLedger(ctx, next) {
 		console.log('Controller HIT: LedgerController::deleteLedger');
 		return new Promise((resolve, reject) => {
+			const O_ID = ctx.params.Owner_ID;
+			const B_ID = ctx.params.Business_ID;
+			const D_ID = ctx.params.Dog_ID;
+			const St = ctx.params.Stamp;
+
 			chpConnection.query({
-				sql: `DELETE FROM Ledger WHERE Stamp = ?;`,
-				values: [ctx.params.Ledger]
+				sql: `DELETE FROM Ledger WHERE Owner_ID = ? && Business_ID = ? && Dog_ID = ? && Stamp = ?;`,
+				values: [O_ID, B_ID, , D_ID, St]
 			}, (err, res) => {
 				if(err) {
 					reject(err);

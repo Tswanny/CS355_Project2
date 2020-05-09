@@ -34,7 +34,7 @@ class DogController {
         console.log('Controller HIT: DogController::Dog');
         return new Promise((resolve, reject) => {
             const query = 'SELECT * FROM Dog WHERE ID = ?;';
-            const dg = ctx.params.dog;
+            const dg = ctx.params.Dog_ID;
 
             chpConnection.query({
                 sql: query,
@@ -100,7 +100,7 @@ class DogController {
 			Primary_Color = ?
                     WHERE ID = ?
                     `,
-                values: [dg.Name, dg.Breed, dg.MIX, dg.Primary_Color, ctx.params.dog]
+                values: [dg.Name, dg.Breed, dg.MIX, dg.Primary_Color, ctx.params.Dog_ID]
             }, (err, res) => {
                 if(err) {
                     reject(err);
@@ -119,12 +119,13 @@ class DogController {
         });
     }
 
+    // Delete a Dog
     async deleteDog(ctx, next) {
         console.log('Controller HIT: DogController::deleteDog');
         return new Promise((resolve, reject) => {
             chpConnection.query({
                 sql: `DELETE FROM Dog WHERE ID = ?;`,
-                values: [ctx.params.dog]
+                values: [ctx.params.Dog_ID]
             }, (err, res) => {
                 if(err) {
                     reject(err);
